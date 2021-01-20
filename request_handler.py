@@ -2,9 +2,8 @@ from entries.request import get_all_entries
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+
 # Here's a class. It inherits from another class.
-
-
 class HandleRequests(BaseHTTPRequestHandler):
     def parse_url(self, path):
         path_params = path.split("/")
