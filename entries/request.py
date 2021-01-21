@@ -44,8 +44,8 @@ def get_all_entries():
     return json.dumps(journal_entries)
 
 
-def get_single_animal(id):
-    with sqlite3.connect("./kennel.db") as conn:
+def get_single_entry(id):
+    with sqlite3.connect("./dailyjournal.db") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -53,25 +53,23 @@ def get_single_animal(id):
         # into the SQL statement.
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.breed,
-            a.status,
-            a.location_id,
-            a.customer_id
-        FROM animal a
-        WHERE a.id = ?
+            je.id,
+            je.concept,
+            je.entry,
+            je.date,
+            je.mood_id
+        FROM journal_entries je
+        WHERE je.id = ?
         """, (id, ))
 
         # Load the single result into memory
         data = db_cursor.fetchone()
 
         # Create an animal instance from the current row
-        animal = Animal(data['id'], data['name'], data['breed'],
-                        data['status'], data['location_id'],
-                        data['customer_id'])
+        journal_entry = JournalEntry(data['id'], data['concept'], data['entry'],
+                                     data['date'], data['mood_id'])
 
-        return json.dumps(animal.__dict__)
+        return json.dumps(journal_entry.__dict__)
 
 
 def get_animals_by_location(location):
@@ -136,11 +134,11 @@ def get_animals_by_status(status):
     return json.dumps(animals)
 
 
-def delete_animal(id):
-    with sqlite3.connect("./kennel.db") as conn:
+def delete_entry(id):
+    with sqlite3.connect("./dailyjournal.db") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        DELETE FROM animal
+        DELETE FROM journal_entries
         WHERE id = ?
         """, (id, ))

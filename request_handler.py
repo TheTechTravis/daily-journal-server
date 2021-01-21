@@ -1,5 +1,5 @@
-from entries.request import get_all_entries
 import json
+from entries.request import delete_entry, get_all_entries, get_single_entry
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -69,7 +69,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             if resource == "entries":
                 if id is not None:
-                    response = f"{get_single_animal(id)}"
+                    response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
             elif resource == "customers":
@@ -174,32 +174,23 @@ class HandleRequests(BaseHTTPRequestHandler):
         (resource, id) = self.parse_url(self.path)
 
         # Delete a single animal from the list
-        if resource == "animals":
-            delete_animal(id)
-
-            # Encode the new animal and send in response
-            self.wfile.write("".encode())
+        if resource == "entries":
+            delete_entry(id)
 
         # Delete a single customer from the list
         if resource == "customers":
             delete_customer(id)
 
-            # Encode the new customer and send in response
-            self.wfile.write("".encode())
-
         # Delete a single employee from the list
         if resource == "employees":
             delete_employee(id)
-
-            # Encode the new employee and send in response
-            self.wfile.write("".encode())
 
         # Delete a single location from the list
         if resource == "locations":
             delete_location(id)
 
-            # Encode the new employee and send in response
-            self.wfile.write("".encode())
+        # Encode the new employee and send in response
+        self.wfile.write("".encode())
 
 
 # This function is not inside the class. It is the starting
